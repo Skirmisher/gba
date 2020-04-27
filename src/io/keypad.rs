@@ -50,6 +50,14 @@ impl KeyInput {
     KeyInput(self.0 ^ other.0)
   }
 
+  pub fn pressed_since(self, previous: Self) -> Self {
+    KeyInput(self.difference(previous).0 & self.0)
+  }
+
+  pub fn released_since(self, previous: Self) -> Self {
+    KeyInput(self.difference(previous).0 & previous.0)
+  }
+
   /// Right/left tribool.
   ///
   /// Right is Plus and Left is Minus
