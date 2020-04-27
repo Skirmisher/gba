@@ -99,14 +99,6 @@ pub const BG3VOFS: VolAddress<u16> = unsafe { VolAddress::new(0x400_001E) };
 // BG3PC
 // BG3PD
 
-// TODO: windowing
-// pub const WIN0H: VolAddress<u16> = unsafe { VolAddress::new(0x400_0040) };
-// pub const WIN1H: VolAddress<u16> = unsafe { VolAddress::new(0x400_0042) };
-// pub const WIN0V: VolAddress<u16> = unsafe { VolAddress::new(0x400_0044) };
-// pub const WIN1V: VolAddress<u16> = unsafe { VolAddress::new(0x400_0046) };
-// pub const WININ: VolAddress<u16> = unsafe { VolAddress::new(0x400_0048) };
-// pub const WINOUT: VolAddress<u16> = unsafe { VolAddress::new(0x400_004A) };
-
 // TODO: blending
 // pub const BLDCNT: VolAddress<u16> = unsafe { VolAddress::new(0x400_0050) };
 // pub const BLDALPHA: VolAddress<u16> = unsafe { VolAddress::new(0x400_0052) };
