@@ -71,6 +71,12 @@ impl Color {
   pub const fn from_rgb(r: u16, g: u16, b: u16) -> Color {
     Color(b << 10 | g << 5 | r)
   }
+  phantom_fields! {
+    self.0: u16,
+    red: 0-4,
+    green: 5-9,
+    blue: 10-14,
+  }
 }
 
 //
