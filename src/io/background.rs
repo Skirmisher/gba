@@ -89,6 +89,9 @@ pub const BG3HOFS: VolAddress<u16, Safe, Safe> = unsafe { VolAddress::new(0x400_
 /// BG3 Y-Offset. Write only. Text mode only. 9 bits.
 pub const BG3VOFS: VolAddress<u16, Safe, Safe> = unsafe { VolAddress::new(0x400_001E) };
 
+// TODO: fixed point format
+pub const BG2X_L: VolAddress<u16> = unsafe { VolAddress::new(0x400_0028) };
+
 // TODO: affine backgrounds
 // BG2X_L
 // BG2X_H
