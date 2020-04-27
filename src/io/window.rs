@@ -11,7 +11,9 @@ pub const WIN1H: VolAddress<HorizontalWindowSetting, Safe, Safe> =
   unsafe { VolAddress::new(0x400_0042) };
 
 newtype! {
-  /// TODO: docs
+  /// Allows control of the Window filters' horizontal dimensions.
+  /// * Bits 0-7: Right boundary pixel of window (exclusive)
+  /// * Bits 8-15: Left boundary pixel of window (inclusive)
   HorizontalWindowSetting, u16
 }
 
@@ -32,7 +34,9 @@ pub const WIN1V: VolAddress<VerticalWindowSetting, Safe, Safe> =
   unsafe { VolAddress::new(0x400_0046) };
 
 newtype! {
-  /// TODO: docs
+  /// Allows control of the Window filters' vertical dimensions.
+  /// * Bits 0-7: Bottom boundary pixel of window (exclusive)
+  /// * Bits 8-15: Top boundary pixel of window (inclusive)
   VerticalWindowSetting, u16
 }
 
