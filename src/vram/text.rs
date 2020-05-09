@@ -4,7 +4,7 @@ use super::*;
 
 newtype! {
   /// A screenblock entry for use in Text mode.
-  TextScreenblockEntry, u16
+  TextScreenblockEntry, pub u16
 }
 impl TextScreenblockEntry {
   /// Generates a default entry with the specified tile index.
