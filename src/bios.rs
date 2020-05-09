@@ -451,7 +451,36 @@ pub fn get_bios_checksum() -> u32 {
   }
 }
 
+// TODO: use fixed crate?
+#[repr(C)]
+pub struct BgAffineSetParams {
+  pub data_center_x: i32, /// .8f
+  pub data_center_y: i32, /// .8f
+  pub display_center_x: i16,
+  pub display_center_y: i16,
+  pub scale_x: i16, /// .8f
+  pub scale_y: i16, /// .8f
+  pub angle: u16,
+}
+
 // TODO: these things will require that we build special structs
+pub fn bg_affine_set(src: *const BgAffineSetParams, dest: usize, num_calc: u32) {
+  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  {
+    unimplemented!()
+  }
+  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  {
+    unsafe {
+      asm!(/* ASM */ "swi 0x0E"
+          :/* OUT */ // none
+          :/* INP */ "{r0}"(src), "{r1}"(dest), "{r2}"(num_calc)
+          :/* CLO */ // none
+          :/* OPT */ // none
+      );
+    }
+  }
+}
 
 //BgAffineSet
 //ObjAffineSet

@@ -90,11 +90,25 @@ pub const BG3HOFS: VolAddress<u16, Safe, Safe> = unsafe { VolAddress::new(0x400_
 pub const BG3VOFS: VolAddress<u16, Safe, Safe> = unsafe { VolAddress::new(0x400_001E) };
 
 // TODO: fixed point format
+pub const BG2PA: VolAddress<u16> = unsafe { VolAddress::new(0x400_0020) };
+pub const BG2PB: VolAddress<u16> = unsafe { VolAddress::new(0x400_0022) };
+pub const BG2PC: VolAddress<u16> = unsafe { VolAddress::new(0x400_0024) };
+pub const BG2PD: VolAddress<u16> = unsafe { VolAddress::new(0x400_0026) };
 pub const BG2X_L: VolAddress<u16> = unsafe { VolAddress::new(0x400_0028) };
+pub const BG2X_H: VolAddress<u16> = unsafe { VolAddress::new(0x400_002A) };
+pub const BG2Y_L: VolAddress<u16> = unsafe { VolAddress::new(0x400_002C) };
+pub const BG2Y_H: VolAddress<u16> = unsafe { VolAddress::new(0x400_002E) };
+
+pub const BG3PA: VolAddress<u16> = unsafe { VolAddress::new(0x400_0030) };
+pub const BG3PB: VolAddress<u16> = unsafe { VolAddress::new(0x400_0032) };
+pub const BG3PC: VolAddress<u16> = unsafe { VolAddress::new(0x400_0034) };
+pub const BG3PD: VolAddress<u16> = unsafe { VolAddress::new(0x400_0036) };
+pub const BG3X_L: VolAddress<u16> = unsafe { VolAddress::new(0x400_0038) };
+pub const BG3X_H: VolAddress<u16> = unsafe { VolAddress::new(0x400_003A) };
+pub const BG3Y_L: VolAddress<u16> = unsafe { VolAddress::new(0x400_003C) };
+pub const BG3Y_H: VolAddress<u16> = unsafe { VolAddress::new(0x400_003E) };
 
 // TODO: affine backgrounds
-// BG2X_L
-// BG2X_H
 // BG2Y_L
 // BG2Y_H
 // BG2PA
@@ -105,8 +119,3 @@ pub const BG2X_L: VolAddress<u16> = unsafe { VolAddress::new(0x400_0028) };
 // BG3PB
 // BG3PC
 // BG3PD
-
-// TODO: blending
-// pub const BLDCNT: VolAddress<u16> = unsafe { VolAddress::new(0x400_0050) };
-// pub const BLDALPHA: VolAddress<u16> = unsafe { VolAddress::new(0x400_0052) };
-// pub const BLDY: VolAddress<u16> = unsafe { VolAddress::new(0x400_0054) };
