@@ -568,7 +568,7 @@ pub fn bit_unpack(src: *const u8, dest: *mut u32, params: *const BitUnpackParams
   }
 }
 
-pub fn lz77_uncomp_8bit(src: *const u8, dest: *mut u8) {
+pub fn lz77_uncomp_8bit(src: *const u32, dest: *mut u8) {
   #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
   {
     unimplemented!()
@@ -586,7 +586,7 @@ pub fn lz77_uncomp_8bit(src: *const u8, dest: *mut u8) {
   }
 }
 
-pub fn lz77_uncomp_16bit(src: *const u8, dest: *mut u16) {
+pub fn lz77_uncomp_16bit(src: *const u32, dest: *mut u16) {
   #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
   {
     unimplemented!()
@@ -604,7 +604,7 @@ pub fn lz77_uncomp_16bit(src: *const u8, dest: *mut u16) {
   }
 }
 
-pub fn huff_uncomp(src: *const u8, dest: *mut u32) {
+pub fn huff_uncomp(src: *const u32, dest: *mut u32) {
   #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
   {
     unimplemented!()
@@ -622,7 +622,7 @@ pub fn huff_uncomp(src: *const u8, dest: *mut u32) {
   }
 }
 
-pub fn rl_uncomp_8bit(src: *const u8, dest: *mut u8) {
+pub fn rl_uncomp_8bit(src: *const u32, dest: *mut u8) {
   #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
   {
     unimplemented!()
@@ -640,7 +640,7 @@ pub fn rl_uncomp_8bit(src: *const u8, dest: *mut u8) {
   }
 }
 
-pub fn rl_uncomp_16bit(src: *const u8, dest: *mut u16) {
+pub fn rl_uncomp_16bit(src: *const u32, dest: *mut u16) {
   #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
   {
     unimplemented!()
