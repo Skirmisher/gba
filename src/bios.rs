@@ -453,7 +453,7 @@ pub fn get_bios_checksum() -> u32 {
 }
 
 // TODO: consider using "fixed" crate? (or optionally implementing setters for it behind a feature)
-#[repr(C)]
+#[repr(C, packed(2))]
 pub struct BgAffineSetParams {
   pub data_center_x: i32, /// .8f
   pub data_center_y: i32, /// .8f
@@ -475,6 +475,92 @@ pub fn bg_affine_set(src: *const BgAffineSetParams, dest: usize, num_calc: u32) 
       asm!(/* ASM */ "swi 0x0E"
           :/* OUT */ // none
           :/* INP */ "{r0}"(src), "{r1}"(dest), "{r2}"(num_calc)
+          :/* CLO */ // none
+          :/* OPT */ // none
+      );
+    }
+  }
+}
+
+#[repr(C, packed(2))]
+pub struct ObjAffineSetParams {
+  pub scale_x: i16, /// .8f
+  pub scale_y: i16, /// .8f
+  pub angle: u16,
+}
+
+newtype_enum! {
+  ObjAffineSetOffset = u32,
+  Continuous = 2,
+  OAM = 8,
+}
+
+pub fn obj_affine_set(src: *const ObjAffineSetParams, dest: usize, num_calc: u32, offset: ObjAffineSetOffset) {
+  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  {
+    unimplemented!()
+  }
+  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  {
+    unsafe {
+      asm!(/* ASM */ "swi 0x0F"
+          :/* OUT */ // none
+          :/* INP */ "{r0}"(src), "{r1}"(dest), "{r2}"(num_calc), "{r3}"(offset)
+          :/* CLO */ // none
+          :/* OPT */ // none
+      );
+    }
+  }
+}
+
+#[repr(u8)]
+pub enum BitUnpackSourceBitWidth {
+  One = 1,
+  Two = 2,
+  Four = 4,
+  Eight = 8,
+}
+
+#[repr(u8)]
+pub enum BitUnpackDestinationBitWidth {
+  One = 1,
+  Two = 2,
+  Four = 4,
+  Eight = 8,
+  Sixteen = 16,
+  ThirtyTwo = 32,
+}
+
+newtype!(BitUnPackDataParams, pub u32);
+
+#[allow(missing_docs)]
+impl BitUnPackDataParams {
+  phantom_fields! {
+    self.0: u32,
+    data_offset: 0-30,
+    zero_data: 31,
+  }
+}
+
+#[repr(C, packed)]
+pub struct BitUnpackParams {
+  pub source_data_length: u16,
+  pub source_bit_width: BitUnpackSourceBitWidth,
+  pub destination_bit_width: BitUnpackDestinationBitWidth,
+  pub data_offset_and_zero_flag: BitUnPackDataParams,
+}
+
+pub fn bit_unpack(src: *const u8, dest: *mut u32, params: *const BitUnpackParams) {
+  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  {
+    unimplemented!()
+  }
+  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  {
+    unsafe {
+      asm!(/* ASM */ "swi 0x10"
+          :/* OUT */ // none
+          :/* INP */ "{r0}"(src), "{r1}"(dest), "{r2}"(params)
           :/* CLO */ // none
           :/* OPT */ // none
       );
@@ -572,12 +658,59 @@ pub fn rl_uncomp_16bit(src: *const u8, dest: *mut u16) {
   }
 }
 
-// TODO: these things will require that we build special structs
-//ObjAffineSet
-//BitUnPack
-//Diff8bitUnFilterWrite8bit
-//Diff8bitUnFilterWrite16bit
-//Diff16bitUnFilter
+pub fn diff_8bit_unfilter_write_8bit(src: *const u8, dest: *mut u8) {
+  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  {
+    unimplemented!()
+  }
+  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  {
+    unsafe {
+      asm!(/* ASM */ "swi 0x16"
+          :/* OUT */ // none
+          :/* INP */ "{r0}"(src), "{r1}"(dest)
+          :/* CLO */ // none
+          :/* OPT */ // none
+      );
+    }
+  }
+}
+
+pub fn diff_8bit_unfilter_write_16bit(src: *const u8, dest: *mut u16) {
+  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  {
+    unimplemented!()
+  }
+  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  {
+    unsafe {
+      asm!(/* ASM */ "swi 0x17"
+          :/* OUT */ // none
+          :/* INP */ "{r0}"(src), "{r1}"(dest)
+          :/* CLO */ // none
+          :/* OPT */ // none
+      );
+    }
+  }
+}
+
+pub fn diff_16bit_unfilter(src: *const u16, dest: *mut u16) {
+  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  {
+    unimplemented!()
+  }
+  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  {
+    unsafe {
+      asm!(/* ASM */ "swi 0x18"
+          :/* OUT */ // none
+          :/* INP */ "{r0}"(src), "{r1}"(dest)
+          :/* CLO */ // none
+          :/* OPT */ // none
+      );
+    }
+  }
+}
 
 /// (`swi 0x19`) "SoundBias", adjusts the volume level to a new level.
 ///
