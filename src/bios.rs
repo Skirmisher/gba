@@ -451,7 +451,7 @@ pub fn get_bios_checksum() -> u32 {
   }
 }
 
-// TODO: use fixed crate?
+// TODO: consider using "fixed" crate? (or optionally implementing setters for it behind a feature)
 #[repr(C)]
 pub struct BgAffineSetParams {
   pub data_center_x: i32, /// .8f
@@ -463,7 +463,6 @@ pub struct BgAffineSetParams {
   pub angle: u16,
 }
 
-// TODO: these things will require that we build special structs
 pub fn bg_affine_set(src: *const BgAffineSetParams, dest: usize, num_calc: u32) {
   #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
   {
@@ -482,13 +481,99 @@ pub fn bg_affine_set(src: *const BgAffineSetParams, dest: usize, num_calc: u32) 
   }
 }
 
-//BgAffineSet
+pub fn lz77_uncomp_8bit(src: *const u8, dest: *mut u8) {
+  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  {
+    unimplemented!()
+  }
+  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  {
+    unsafe {
+      asm!(/* ASM */ "swi 0x11"
+          :/* OUT */ // none
+          :/* INP */ "{r0}"(src), "{r1}"(dest)
+          :/* CLO */ // none
+          :/* OPT */ // none
+      );
+    }
+  }
+}
+
+pub fn lz77_uncomp_16bit(src: *const u8, dest: *mut u16) {
+  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  {
+    unimplemented!()
+  }
+  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  {
+    unsafe {
+      asm!(/* ASM */ "swi 0x12"
+          :/* OUT */ // none
+          :/* INP */ "{r0}"(src), "{r1}"(dest)
+          :/* CLO */ // none
+          :/* OPT */ // none
+      );
+    }
+  }
+}
+
+pub fn huff_uncomp(src: *const u8, dest: *mut u32) {
+  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  {
+    unimplemented!()
+  }
+  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  {
+    unsafe {
+      asm!(/* ASM */ "swi 0x13"
+          :/* OUT */ // none
+          :/* INP */ "{r0}"(src), "{r1}"(dest)
+          :/* CLO */ // none
+          :/* OPT */ // none
+      );
+    }
+  }
+}
+
+pub fn rl_uncomp_8bit(src: *const u8, dest: *mut u8) {
+  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  {
+    unimplemented!()
+  }
+  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  {
+    unsafe {
+      asm!(/* ASM */ "swi 0x14"
+          :/* OUT */ // none
+          :/* INP */ "{r0}"(src), "{r1}"(dest)
+          :/* CLO */ // none
+          :/* OPT */ // none
+      );
+    }
+  }
+}
+
+pub fn rl_uncomp_16bit(src: *const u8, dest: *mut u16) {
+  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  {
+    unimplemented!()
+  }
+  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  {
+    unsafe {
+      asm!(/* ASM */ "swi 0x15"
+          :/* OUT */ // none
+          :/* INP */ "{r0}"(src), "{r1}"(dest)
+          :/* CLO */ // none
+          :/* OPT */ // none
+      );
+    }
+  }
+}
+
+// TODO: these things will require that we build special structs
 //ObjAffineSet
 //BitUnPack
-//LZ77UnCompReadNormalWrite8bit
-//LZ77UnCompReadNormalWrite16bit
-//HuffUnCompReadNormal
-//RLUnCompReadNormalWrite8bit
 //Diff8bitUnFilterWrite8bit
 //Diff8bitUnFilterWrite16bit
 //Diff16bitUnFilter
