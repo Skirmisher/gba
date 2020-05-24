@@ -476,7 +476,7 @@ pub fn bg_affine_set(src: *const BgAffineSetParams, dest: usize, num_calc: u32) 
           :/* OUT */ // none
           :/* INP */ "{r0}"(src), "{r1}"(dest), "{r2}"(num_calc)
           :/* CLO */ // none
-          :/* OPT */ // none
+          :/* OPT */ "volatile"
       );
     }
   }
@@ -507,7 +507,7 @@ pub fn obj_affine_set(src: *const ObjAffineSetParams, dest: usize, num_calc: u32
           :/* OUT */ // none
           :/* INP */ "{r0}"(src), "{r1}"(dest), "{r2}"(num_calc), "{r3}"(offset)
           :/* CLO */ // none
-          :/* OPT */ // none
+          :/* OPT */ "volatile"
       );
     }
   }
@@ -562,7 +562,7 @@ pub fn bit_unpack(src: *const u8, dest: *mut u32, params: *const BitUnpackParams
           :/* OUT */ // none
           :/* INP */ "{r0}"(src), "{r1}"(dest), "{r2}"(params)
           :/* CLO */ // none
-          :/* OPT */ // none
+          :/* OPT */ "volatile"
       );
     }
   }
@@ -580,7 +580,7 @@ pub fn lz77_uncomp_8bit(src: *const u32, dest: *mut u8) {
           :/* OUT */ // none
           :/* INP */ "{r0}"(src), "{r1}"(dest)
           :/* CLO */ // none
-          :/* OPT */ // none
+          :/* OPT */ "volatile"
       );
     }
   }
@@ -598,7 +598,7 @@ pub fn lz77_uncomp_16bit(src: *const u32, dest: *mut u16) {
           :/* OUT */ // none
           :/* INP */ "{r0}"(src), "{r1}"(dest)
           :/* CLO */ // none
-          :/* OPT */ // none
+          :/* OPT */ "volatile"
       );
     }
   }
@@ -616,7 +616,7 @@ pub fn huff_uncomp(src: *const u32, dest: *mut u32) {
           :/* OUT */ // none
           :/* INP */ "{r0}"(src), "{r1}"(dest)
           :/* CLO */ // none
-          :/* OPT */ // none
+          :/* OPT */ "volatile"
       );
     }
   }
@@ -634,7 +634,7 @@ pub fn rl_uncomp_8bit(src: *const u32, dest: *mut u8) {
           :/* OUT */ // none
           :/* INP */ "{r0}"(src), "{r1}"(dest)
           :/* CLO */ // none
-          :/* OPT */ // none
+          :/* OPT */ "volatile"
       );
     }
   }
@@ -652,7 +652,7 @@ pub fn rl_uncomp_16bit(src: *const u32, dest: *mut u16) {
           :/* OUT */ // none
           :/* INP */ "{r0}"(src), "{r1}"(dest)
           :/* CLO */ // none
-          :/* OPT */ // none
+          :/* OPT */ "volatile"
       );
     }
   }
@@ -670,7 +670,7 @@ pub fn diff_8bit_unfilter_write_8bit(src: *const u8, dest: *mut u8) {
           :/* OUT */ // none
           :/* INP */ "{r0}"(src), "{r1}"(dest)
           :/* CLO */ // none
-          :/* OPT */ // none
+          :/* OPT */ "volatile"
       );
     }
   }
@@ -688,7 +688,7 @@ pub fn diff_8bit_unfilter_write_16bit(src: *const u8, dest: *mut u16) {
           :/* OUT */ // none
           :/* INP */ "{r0}"(src), "{r1}"(dest)
           :/* CLO */ // none
-          :/* OPT */ // none
+          :/* OPT */ "volatile"
       );
     }
   }
@@ -706,7 +706,7 @@ pub fn diff_16bit_unfilter(src: *const u16, dest: *mut u16) {
           :/* OUT */ // none
           :/* INP */ "{r0}"(src), "{r1}"(dest)
           :/* CLO */ // none
-          :/* OPT */ // none
+          :/* OPT */ "volatile"
       );
     }
   }
