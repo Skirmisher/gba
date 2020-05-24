@@ -248,7 +248,7 @@ newtype! {
   SoundPWMSetting, u16
 }
 
-impl SoundMasterSetting {
+impl SoundPWMSetting {
   phantom_fields! {
     self.0: u16,
     bias_level: 1-9,
