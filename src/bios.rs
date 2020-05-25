@@ -364,6 +364,7 @@ pub unsafe fn cpu_set16(src: *const u16, dest: *mut u16, count: u32, fixed_sourc
         in("r0") src,
         in("r1") dest,
         in("r2") control,
+        lateout("r3") _,
     );
   }
 }
@@ -391,6 +392,7 @@ pub unsafe fn cpu_set32(src: *const u32, dest: *mut u32, count: u32, fixed_sourc
         in("r0") src,
         in("r1") dest,
         in("r2") control,
+        lateout("r3") _,
     );
   }
 }
@@ -419,6 +421,7 @@ pub unsafe fn cpu_fast_set(src: *const u32, dest: *mut u32, count: u32, fixed_so
         in("r0") src,
         in("r1") dest,
         in("r2") control,
+        lateout("r3") _,
     );
   }
 }
@@ -471,11 +474,12 @@ pub fn bg_affine_set(src: *const BgAffineSetParams, dest: usize, num_calc: u32) 
   #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
   {
     unsafe {
-      asm!(/* ASM */ "swi 0x0E"
-          :/* OUT */ // none
-          :/* INP */ "{r0}"(src), "{r1}"(dest), "{r2}"(num_calc)
-          :/* CLO */ // none
-          :/* OPT */ "volatile"
+      asm!(
+          "swi 0x0E",
+          in("r0") src,
+          in("r1") dest,
+          in("r2") num_calc,
+          lateout("r3") _,
       );
     }
   }
@@ -502,11 +506,12 @@ pub fn obj_affine_set(src: *const ObjAffineSetParams, dest: usize, num_calc: u32
   #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
   {
     unsafe {
-      asm!(/* ASM */ "swi 0x0F"
-          :/* OUT */ // none
-          :/* INP */ "{r0}"(src), "{r1}"(dest), "{r2}"(num_calc), "{r3}"(offset)
-          :/* CLO */ // none
-          :/* OPT */ "volatile"
+      asm!(
+          "swi 0x0F",
+          in("r0") src,
+          in("r1") dest,
+          in("r2") num_calc,
+          in("r3") offset,
       );
     }
   }
@@ -557,11 +562,12 @@ pub fn bit_unpack(src: *const u8, dest: *mut u32, params: *const BitUnpackParams
   #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
   {
     unsafe {
-      asm!(/* ASM */ "swi 0x10"
-          :/* OUT */ // none
-          :/* INP */ "{r0}"(src), "{r1}"(dest), "{r2}"(params)
-          :/* CLO */ // none
-          :/* OPT */ "volatile"
+      asm!(
+          "swi 0x10",
+          in("r0") src,
+          in("r1") dest,
+          in("r2") params,
+          lateout("r3") _,
       );
     }
   }
@@ -575,11 +581,11 @@ pub fn lz77_uncomp_8bit(src: *const u32, dest: *mut u8) {
   #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
   {
     unsafe {
-      asm!(/* ASM */ "swi 0x11"
-          :/* OUT */ // none
-          :/* INP */ "{r0}"(src), "{r1}"(dest)
-          :/* CLO */ // none
-          :/* OPT */ "volatile"
+      asm!(
+          "swi 0x11",
+          in("r0") src,
+          in("r1") dest,
+          lateout("r3") _,
       );
     }
   }
@@ -593,11 +599,11 @@ pub fn lz77_uncomp_16bit(src: *const u32, dest: *mut u16) {
   #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
   {
     unsafe {
-      asm!(/* ASM */ "swi 0x12"
-          :/* OUT */ // none
-          :/* INP */ "{r0}"(src), "{r1}"(dest)
-          :/* CLO */ // none
-          :/* OPT */ "volatile"
+      asm!(
+          "swi 0x12",
+          in("r0") src,
+          in("r1") dest,
+          lateout("r3") _,
       );
     }
   }
@@ -611,11 +617,11 @@ pub fn huff_uncomp(src: *const u32, dest: *mut u32) {
   #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
   {
     unsafe {
-      asm!(/* ASM */ "swi 0x13"
-          :/* OUT */ // none
-          :/* INP */ "{r0}"(src), "{r1}"(dest)
-          :/* CLO */ // none
-          :/* OPT */ "volatile"
+      asm!(
+          "swi 0x13",
+          in("r0") src,
+          in("r1") dest,
+          lateout("r3") _,
       );
     }
   }
@@ -629,11 +635,11 @@ pub fn rl_uncomp_8bit(src: *const u32, dest: *mut u8) {
   #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
   {
     unsafe {
-      asm!(/* ASM */ "swi 0x14"
-          :/* OUT */ // none
-          :/* INP */ "{r0}"(src), "{r1}"(dest)
-          :/* CLO */ // none
-          :/* OPT */ "volatile"
+      asm!(
+          "swi 0x14",
+          in("r0") src,
+          in("r1") dest,
+          lateout("r3") _,
       );
     }
   }
@@ -647,11 +653,11 @@ pub fn rl_uncomp_16bit(src: *const u32, dest: *mut u16) {
   #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
   {
     unsafe {
-      asm!(/* ASM */ "swi 0x15"
-          :/* OUT */ // none
-          :/* INP */ "{r0}"(src), "{r1}"(dest)
-          :/* CLO */ // none
-          :/* OPT */ "volatile"
+      asm!(
+          "swi 0x15",
+          in("r0") src,
+          in("r1") dest,
+          lateout("r3") _,
       );
     }
   }
@@ -665,11 +671,11 @@ pub fn diff_8bit_unfilter_write_8bit(src: *const u8, dest: *mut u8) {
   #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
   {
     unsafe {
-      asm!(/* ASM */ "swi 0x16"
-          :/* OUT */ // none
-          :/* INP */ "{r0}"(src), "{r1}"(dest)
-          :/* CLO */ // none
-          :/* OPT */ "volatile"
+      asm!(
+          "swi 0x16",
+          in("r0") src,
+          in("r1") dest,
+          lateout("r3") _,
       );
     }
   }
@@ -683,11 +689,11 @@ pub fn diff_8bit_unfilter_write_16bit(src: *const u8, dest: *mut u16) {
   #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
   {
     unsafe {
-      asm!(/* ASM */ "swi 0x17"
-          :/* OUT */ // none
-          :/* INP */ "{r0}"(src), "{r1}"(dest)
-          :/* CLO */ // none
-          :/* OPT */ "volatile"
+      asm!(
+          "swi 0x17",
+          in("r0") src,
+          in("r1") dest,
+          lateout("r3") _,
       );
     }
   }
@@ -701,11 +707,11 @@ pub fn diff_16bit_unfilter(src: *const u16, dest: *mut u16) {
   #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
   {
     unsafe {
-      asm!(/* ASM */ "swi 0x18"
-          :/* OUT */ // none
-          :/* INP */ "{r0}"(src), "{r1}"(dest)
-          :/* CLO */ // none
-          :/* OPT */ "volatile"
+      asm!(
+          "swi 0x18",
+          in("r0") src,
+          in("r1") dest,
+          lateout("r3") _,
       );
     }
   }
