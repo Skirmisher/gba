@@ -10,7 +10,9 @@
 
 #![cfg_attr(not(all(target_vendor = "nintendo", target_env = "agb")), allow(unused_variables))]
 
+#[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
 use core::mem;
+
 use super::*;
 use io::irq::IrqFlags;
 
@@ -512,7 +514,7 @@ pub fn obj_affine_set(src: *const ObjAffineSetParams, dest: usize, num_calc: u32
           in("r0") src,
           in("r1") dest,
           in("r2") num_calc,
-          in("r3") offset,
+          in("r3") offset as u32,
       );
     }
   }
