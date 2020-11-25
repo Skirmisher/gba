@@ -10,6 +10,9 @@
 
 #![cfg_attr(not(target_arch = "arm"), allow(unused_variables))]
 
+#[cfg(target_arch = "arm")]
+use core::mem;
+
 use super::*;
 use io::irq::IrqFlags;
 
@@ -467,11 +470,11 @@ pub struct BgAffineSetParams {
 }
 
 pub fn bg_affine_set(src: *const BgAffineSetParams, dest: usize, num_calc: u32) {
-  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  #[cfg(not(target_arch = "arm"))]
   {
     unimplemented!()
   }
-  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  #[cfg(target_arch = "arm")]
   {
     unsafe {
       asm!(
@@ -499,11 +502,11 @@ newtype_enum! {
 }
 
 pub fn obj_affine_set(src: *const ObjAffineSetParams, dest: usize, num_calc: u32, offset: ObjAffineSetOffset) {
-  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  #[cfg(not(target_arch = "arm"))]
   {
     unimplemented!()
   }
-  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  #[cfg(target_arch = "arm")]
   {
     unsafe {
       asm!(
@@ -555,11 +558,11 @@ pub struct BitUnpackParams {
 }
 
 pub fn bit_unpack(src: *const u8, dest: *mut u32, params: *const BitUnpackParams) {
-  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  #[cfg(not(target_arch = "arm"))]
   {
     unimplemented!()
   }
-  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  #[cfg(target_arch = "arm")]
   {
     unsafe {
       asm!(
@@ -574,11 +577,11 @@ pub fn bit_unpack(src: *const u8, dest: *mut u32, params: *const BitUnpackParams
 }
 
 pub fn lz77_uncomp_8bit(src: *const u32, dest: *mut u8) {
-  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  #[cfg(not(target_arch = "arm"))]
   {
     unimplemented!()
   }
-  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  #[cfg(target_arch = "arm")]
   {
     unsafe {
       asm!(
@@ -592,11 +595,11 @@ pub fn lz77_uncomp_8bit(src: *const u32, dest: *mut u8) {
 }
 
 pub fn lz77_uncomp_16bit(src: *const u32, dest: *mut u16) {
-  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  #[cfg(not(target_arch = "arm"))]
   {
     unimplemented!()
   }
-  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  #[cfg(target_arch = "arm")]
   {
     unsafe {
       asm!(
@@ -610,11 +613,11 @@ pub fn lz77_uncomp_16bit(src: *const u32, dest: *mut u16) {
 }
 
 pub fn huff_uncomp(src: *const u32, dest: *mut u32) {
-  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  #[cfg(not(target_arch = "arm"))]
   {
     unimplemented!()
   }
-  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  #[cfg(target_arch = "arm")]
   {
     unsafe {
       asm!(
@@ -628,11 +631,11 @@ pub fn huff_uncomp(src: *const u32, dest: *mut u32) {
 }
 
 pub fn rl_uncomp_8bit(src: *const u32, dest: *mut u8) {
-  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  #[cfg(not(target_arch = "arm"))]
   {
     unimplemented!()
   }
-  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  #[cfg(target_arch = "arm")]
   {
     unsafe {
       asm!(
@@ -646,11 +649,11 @@ pub fn rl_uncomp_8bit(src: *const u32, dest: *mut u8) {
 }
 
 pub fn rl_uncomp_16bit(src: *const u32, dest: *mut u16) {
-  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  #[cfg(not(target_arch = "arm"))]
   {
     unimplemented!()
   }
-  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  #[cfg(target_arch = "arm")]
   {
     unsafe {
       asm!(
@@ -664,11 +667,11 @@ pub fn rl_uncomp_16bit(src: *const u32, dest: *mut u16) {
 }
 
 pub fn diff_8bit_unfilter_write_8bit(src: *const u8, dest: *mut u8) {
-  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  #[cfg(not(target_arch = "arm"))]
   {
     unimplemented!()
   }
-  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  #[cfg(target_arch = "arm")]
   {
     unsafe {
       asm!(
@@ -682,11 +685,11 @@ pub fn diff_8bit_unfilter_write_8bit(src: *const u8, dest: *mut u8) {
 }
 
 pub fn diff_8bit_unfilter_write_16bit(src: *const u8, dest: *mut u16) {
-  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  #[cfg(not(target_arch = "arm"))]
   {
     unimplemented!()
   }
-  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  #[cfg(target_arch = "arm")]
   {
     unsafe {
       asm!(
@@ -700,11 +703,11 @@ pub fn diff_8bit_unfilter_write_16bit(src: *const u8, dest: *mut u16) {
 }
 
 pub fn diff_16bit_unfilter(src: *const u16, dest: *mut u16) {
-  #[cfg(not(all(target_vendor = "nintendo", target_env = "agb")))]
+  #[cfg(not(target_arch = "arm"))]
   {
     unimplemented!()
   }
-  #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+  #[cfg(target_arch = "arm")]
   {
     unsafe {
       asm!(
