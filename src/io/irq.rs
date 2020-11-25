@@ -171,6 +171,13 @@ pub const IME: VolAddress<IrqEnableSetting> = unsafe { VolAddress::new(0x400_020
 /// register in addition to the usual interrupt acknowledgement.
 pub const BIOS_IF: VolAddress<IrqFlags> = unsafe { VolAddress::new(0x0300_7FF8) };
 
+/// The user interrupt handler function address
+///
+/// ## Safety
+/// * This must be an ARM function
+/// * This function is called in IRQ mode.
+pub const USER_IRQ_FN: VolAddress<Option<fn()>> = unsafe { VolAddress::new(0x0300_7FFC) };
+
 /// A function pointer for use as an interrupt handler.
 pub type IrqHandler = extern "C" fn(IrqFlags);
 
