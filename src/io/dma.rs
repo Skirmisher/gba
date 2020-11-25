@@ -142,6 +142,7 @@ impl DMA0 {
   /// # Safety
   ///
   /// The source pointer must be aligned and valid to read from.
+  #[inline(always)]
   pub unsafe fn set_source(src: *const u32) {
     Self::DMA0SAD.write(src)
   }
@@ -153,6 +154,7 @@ impl DMA0 {
   /// # Safety
   ///
   /// The source pointer must be aligned and valid to write to.
+  #[inline(always)]
   pub unsafe fn set_dest(dest: *mut u32) {
     Self::DMA0DAD.write(dest)
   }
@@ -165,11 +167,13 @@ impl DMA0 {
   ///
   /// The count given must specify a valid number of units to write, starting at
   /// the assigned destination address.
+  #[inline(always)]
   pub unsafe fn set_count(count: u16) {
     Self::DMA0CNT_L.write(count)
   }
 
   /// Reads the current control setting.
+  #[inline(always)]
   pub fn control() -> DMAControlSetting {
     Self::DMA0CNT_H.read()
   }
@@ -180,6 +184,7 @@ impl DMA0 {
   ///
   /// You must ensure that the Source, Destination, and Count values are set
   /// correctly **before** you activate the Enable bit.
+  #[inline(always)]
   pub unsafe fn set_control(setting: DMAControlSetting) {
     Self::DMA0CNT_H.write(setting)
   }
@@ -203,6 +208,7 @@ impl DMA1 {
   /// # Safety
   ///
   /// The source pointer must be aligned and valid to read from.
+  #[inline(always)]
   pub unsafe fn set_source(src: *const u32) {
     Self::DMA1SAD.write(src)
   }
@@ -214,6 +220,7 @@ impl DMA1 {
   /// # Safety
   ///
   /// The source pointer must be aligned and valid to write to.
+  #[inline(always)]
   pub unsafe fn set_dest(dest: *mut u32) {
     Self::DMA1DAD.write(dest)
   }
@@ -226,11 +233,13 @@ impl DMA1 {
   ///
   /// The count given must specify a valid number of units to write, starting at
   /// the assigned destination address.
+  #[inline(always)]
   pub unsafe fn set_count(count: u16) {
     Self::DMA1CNT_L.write(count)
   }
 
   /// Reads the current control setting.
+  #[inline(always)]
   pub fn control() -> DMAControlSetting {
     Self::DMA1CNT_H.read()
   }
@@ -241,6 +250,7 @@ impl DMA1 {
   ///
   /// You must ensure that the Source, Destination, and Count values are set
   /// correctly **before** you activate the Enable bit.
+  #[inline(always)]
   pub unsafe fn set_control(setting: DMAControlSetting) {
     Self::DMA1CNT_H.write(setting)
   }
@@ -264,6 +274,7 @@ impl DMA2 {
   /// # Safety
   ///
   /// The source pointer must be aligned and valid to read from.
+  #[inline(always)]
   pub unsafe fn set_source(src: *const u32) {
     Self::DMA2SAD.write(src)
   }
@@ -275,6 +286,7 @@ impl DMA2 {
   /// # Safety
   ///
   /// The source pointer must be aligned and valid to write to.
+  #[inline(always)]
   pub unsafe fn set_dest(dest: *mut u32) {
     Self::DMA2DAD.write(dest)
   }
@@ -287,11 +299,13 @@ impl DMA2 {
   ///
   /// The count given must specify a valid number of units to write, starting at
   /// the assigned destination address.
+  #[inline(always)]
   pub unsafe fn set_count(count: u16) {
     Self::DMA2CNT_L.write(count)
   }
 
   /// Reads the current control setting.
+  #[inline(always)]
   pub fn control() -> DMAControlSetting {
     Self::DMA2CNT_H.read()
   }
@@ -302,6 +316,7 @@ impl DMA2 {
   ///
   /// You must ensure that the Source, Destination, and Count values are set
   /// correctly **before** you activate the Enable bit.
+  #[inline(always)]
   pub unsafe fn set_control(setting: DMAControlSetting) {
     Self::DMA2CNT_H.write(setting)
   }
@@ -326,6 +341,7 @@ impl DMA3 {
   /// # Safety
   ///
   /// The source pointer must be aligned and valid to read from.
+  #[inline(always)]
   pub unsafe fn set_source(src: *const u32) {
     Self::DMA3SAD.write(src)
   }
@@ -337,6 +353,7 @@ impl DMA3 {
   /// # Safety
   ///
   /// The source pointer must be aligned and valid to write to.
+  #[inline(always)]
   pub unsafe fn set_dest(dest: *mut u32) {
     Self::DMA3DAD.write(dest)
   }
@@ -349,11 +366,13 @@ impl DMA3 {
   ///
   /// The count given must specify a valid number of units to write, starting at
   /// the assigned destination address.
+  #[inline(always)]
   pub unsafe fn set_count(count: u16) {
     Self::DMA3CNT_L.write(count)
   }
 
   /// Reads the current control setting.
+  #[inline(always)]
   pub fn control() -> DMAControlSetting {
     Self::DMA3CNT_H.read()
   }
@@ -364,6 +383,7 @@ impl DMA3 {
   ///
   /// You must ensure that the Source, Destination, and Count values are set
   /// correctly **before** you activate the Enable bit.
+  #[inline(always)]
   pub unsafe fn set_control(setting: DMAControlSetting) {
     Self::DMA3CNT_H.write(setting)
   }
@@ -374,6 +394,7 @@ impl DMA3 {
   ///
   /// Both pointers must be aligned, and all positions specified for writing
   /// must be valid for writing.
+  #[inline(always)]
   pub unsafe fn fill32(src: *const u32, dest: *mut u32, count: u16) {
     const FILL_CONTROL: DMAControlSetting = DMAControlSetting::new()
       .with_source_address_control(DMASrcAddressControl::Fixed)
@@ -389,7 +410,7 @@ impl DMA3 {
     // it's only two cycles we just insert two NOP instructions to ensure that
     // successive calls to `fill32` or other DMA methods don't interfere with
     // each other.
-    #[cfg(all(target_vendor = "nintendo", target_env = "agb"))]
+    #[cfg(target_arch = "arm")]
     {
       asm!("
         NOP
