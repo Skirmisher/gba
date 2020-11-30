@@ -56,6 +56,7 @@ use io::irq::IrqFlags;
 /// convinced that you can't actually use this to force purely safe code to
 /// perform UB, but such a scenario might exist.
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub unsafe fn soft_reset() -> ! {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -63,7 +64,7 @@ pub unsafe fn soft_reset() -> ! {
   }
   #[cfg(target_arch = "arm")]
   {
-    asm!("swi 0x00", options(noreturn))
+    asm!("swi 0x000000", options(noreturn))
   }
 }
 
@@ -93,6 +94,7 @@ pub unsafe fn soft_reset() -> ! {
 /// memory, except in the case that you were executing out of EWRAM and clear
 /// that. If you do then you return to nothing and have a bad time.
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub unsafe fn register_ram_reset(flags: RegisterRAMResetFlags) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -100,7 +102,7 @@ pub unsafe fn register_ram_reset(flags: RegisterRAMResetFlags) {
   }
   #[cfg(target_arch = "arm")]
   {
-    asm!("swi 0x01", in("r0") flags.0);
+    asm!("swi 0x010000", in("r0") flags.0);
   }
 }
 newtype! {
@@ -127,6 +129,7 @@ impl RegisterRAMResetFlags {
 /// Components _other than_ the CPU continue to function. Halt mode ends when
 /// any enabled interrupt triggers.
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn halt() {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -135,7 +138,7 @@ pub fn halt() {
   #[cfg(target_arch = "arm")]
   {
     unsafe {
-      asm!("swi 0x02");
+      asm!("swi 0x020000");
     }
   }
 }
@@ -149,6 +152,7 @@ pub fn halt() {
 /// they will continue to consume power), and you should also disable any other
 /// optional externals such as rumble and infra-red.
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn stop() {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -157,7 +161,7 @@ pub fn stop() {
   #[cfg(target_arch = "arm")]
   {
     unsafe {
-      asm!("swi 0x03");
+      asm!("swi 0x030000");
     }
   }
 }
@@ -176,6 +180,7 @@ pub fn stop() {
 /// Interrupt Flags at [`BIOS_IF`](io::irq::BIOS_IF) in addition to
 /// the usual interrupt acknowledgement.
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn interrupt_wait(ignore_current_flags: bool, target_flags: IrqFlags) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -185,7 +190,7 @@ pub fn interrupt_wait(ignore_current_flags: bool, target_flags: IrqFlags) {
   {
     unsafe {
       asm!(
-          "swi 0x04",
+          "swi 0x040000",
           in("r0") mem::transmute::<bool, u8>(ignore_current_flags),
           in("r1") mem::transmute::<IrqFlags, u16>(target_flags),
       );
@@ -199,6 +204,7 @@ pub fn interrupt_wait(ignore_current_flags: bool, target_flags: IrqFlags) {
 /// (aka "wait for a new vblank"). You must follow the same guidelines that
 /// [`interrupt_wait`](interrupt_wait) outlines.
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn vblank_interrupt_wait() {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -208,7 +214,7 @@ pub fn vblank_interrupt_wait() {
   {
     unsafe {
       asm!(
-          "swi 0x05",
+          "swi 0x050000",
           out("r0") _,
           out("r1") _,
       );
@@ -222,6 +228,7 @@ pub fn vblank_interrupt_wait() {
 ///
 /// If the denominator is 0.
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn div_rem(numerator: i32, denominator: i32) -> (i32, i32) {
   assert!(denominator != 0);
   #[cfg(not(target_arch = "arm"))]
@@ -234,7 +241,7 @@ pub fn div_rem(numerator: i32, denominator: i32) -> (i32, i32) {
     let rem_out: i32;
     unsafe {
       asm!(
-          "swi 0x06",
+          "swi 0x060000",
           inout("r0") numerator => div_out,
           inout("r1") denominator => rem_out,
           out("r3") _,
@@ -266,6 +273,7 @@ pub fn rem(numerator: i32, denominator: i32) -> i32 {
 /// If you want more fractional precision, you can shift your input to the left
 /// by `2n` bits to get `n` more bits of fractional precision in your output.
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn sqrt(val: u32) -> u16 {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -276,7 +284,7 @@ pub fn sqrt(val: u32) -> u16 {
     let out: u32;
     unsafe {
       asm!(
-          "swi 0x08",
+          "swi 0x080000",
           inout("r0") val => out,
           out("r1") _,
           out("r3") _,
@@ -294,6 +302,7 @@ pub fn sqrt(val: u32) -> u16 {
 ///
 /// Accuracy suffers if `theta` is less than `-pi/4` or greater than `pi/4`.
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn atan(theta: i16) -> i16 {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -304,7 +313,7 @@ pub fn atan(theta: i16) -> i16 {
     let out: i16;
     unsafe {
       asm!(
-          "swi 0x09",
+          "swi 0x090000",
           inout("r0") theta => out,
           out("r1") _,
           out("r3") _,
@@ -323,6 +332,7 @@ pub fn atan(theta: i16) -> i16 {
 /// `y` and `x` use the same format as with `atan`: 1 bit for sign, 1 bit for
 /// integral, 14 bits for fractional.
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn atan2(y: i16, x: i16) -> u16 {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -333,7 +343,7 @@ pub fn atan2(y: i16, x: i16) -> u16 {
     let out: u16;
     unsafe {
       asm!(
-          "swi 0x0A",
+          "swi 0x0A0000",
           inout("r0") x => out,
           in("r1") y,
           out("r3") _,
@@ -354,6 +364,7 @@ pub fn atan2(y: i16, x: i16) -> u16 {
 ///
 /// * Both pointers must be aligned
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub unsafe fn cpu_set16(src: *const u16, dest: *mut u16, count: u32, fixed_source: bool) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -363,7 +374,7 @@ pub unsafe fn cpu_set16(src: *const u16, dest: *mut u16, count: u32, fixed_sourc
   {
     let control = count + ((fixed_source as u32) << 24);
     asm!(
-        "swi 0x0B",
+        "swi 0x0B0000",
         in("r0") src,
         in("r1") dest,
         in("r2") control,
@@ -382,6 +393,7 @@ pub unsafe fn cpu_set16(src: *const u16, dest: *mut u16, count: u32, fixed_sourc
 ///
 /// * Both pointers must be aligned
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub unsafe fn cpu_set32(src: *const u32, dest: *mut u32, count: u32, fixed_source: bool) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -391,7 +403,7 @@ pub unsafe fn cpu_set32(src: *const u32, dest: *mut u32, count: u32, fixed_sourc
   {
     let control = count + ((fixed_source as u32) << 24) + (1 << 26);
     asm!(
-        "swi 0x0B",
+        "swi 0x0B0000",
         in("r0") src,
         in("r1") dest,
         in("r2") control,
@@ -411,6 +423,7 @@ pub unsafe fn cpu_set32(src: *const u32, dest: *mut u32, count: u32, fixed_sourc
 ///
 /// * Both pointers must be aligned
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub unsafe fn cpu_fast_set(src: *const u32, dest: *mut u32, count: u32, fixed_source: bool) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -420,7 +433,7 @@ pub unsafe fn cpu_fast_set(src: *const u32, dest: *mut u32, count: u32, fixed_so
   {
     let control = count + ((fixed_source as u32) << 24);
     asm!(
-        "swi 0x0C",
+        "swi 0x0C0000",
         in("r0") src,
         in("r1") dest,
         in("r2") control,
@@ -438,6 +451,7 @@ pub unsafe fn cpu_fast_set(src: *const u32, dest: *mut u32, count: u32, fixed_so
 /// `0xBAAE_187F` (GBA / GBA SP) or `0xBAAE_1880` (DS in GBA mode). If you get
 /// some other value I guess you're probably running on an emulator that just
 /// broke the fourth wall.
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn get_bios_checksum() -> u32 {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -448,7 +462,7 @@ pub fn get_bios_checksum() -> u32 {
     let out: u32;
     unsafe {
       asm!(
-          "swi 0x0D",
+          "swi 0x0D0000",
           out("r0") out,
           options(pure, readonly),
       );
@@ -469,6 +483,7 @@ pub struct BgAffineSetParams {
   pub angle: u16,
 }
 
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn bg_affine_set(src: *const BgAffineSetParams, dest: usize, num_calc: u32) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -478,7 +493,7 @@ pub fn bg_affine_set(src: *const BgAffineSetParams, dest: usize, num_calc: u32) 
   {
     unsafe {
       asm!(
-          "swi 0x0E",
+          "swi 0x0E0000",
           in("r0") src,
           in("r1") dest,
           in("r2") num_calc,
@@ -501,6 +516,7 @@ newtype_enum! {
   OAM = 8,
 }
 
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn obj_affine_set(src: *const ObjAffineSetParams, dest: usize, num_calc: u32, offset: ObjAffineSetOffset) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -510,7 +526,7 @@ pub fn obj_affine_set(src: *const ObjAffineSetParams, dest: usize, num_calc: u32
   {
     unsafe {
       asm!(
-          "swi 0x0F",
+          "swi 0x0F0000",
           in("r0") src,
           in("r1") dest,
           in("r2") num_calc,
@@ -557,6 +573,7 @@ pub struct BitUnpackParams {
   pub data_offset_and_zero_flag: BitUnPackDataParams,
 }
 
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn bit_unpack(src: *const u8, dest: *mut u32, params: *const BitUnpackParams) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -566,7 +583,7 @@ pub fn bit_unpack(src: *const u8, dest: *mut u32, params: *const BitUnpackParams
   {
     unsafe {
       asm!(
-          "swi 0x10",
+          "swi 0x100000",
           in("r0") src,
           in("r1") dest,
           in("r2") params,
@@ -576,6 +593,7 @@ pub fn bit_unpack(src: *const u8, dest: *mut u32, params: *const BitUnpackParams
   }
 }
 
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn lz77_uncomp_8bit(src: *const u32, dest: *mut u8) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -585,7 +603,7 @@ pub fn lz77_uncomp_8bit(src: *const u32, dest: *mut u8) {
   {
     unsafe {
       asm!(
-          "swi 0x11",
+          "swi 0x110000",
           in("r0") src,
           in("r1") dest,
           lateout("r3") _,
@@ -594,6 +612,7 @@ pub fn lz77_uncomp_8bit(src: *const u32, dest: *mut u8) {
   }
 }
 
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn lz77_uncomp_16bit(src: *const u32, dest: *mut u16) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -603,7 +622,7 @@ pub fn lz77_uncomp_16bit(src: *const u32, dest: *mut u16) {
   {
     unsafe {
       asm!(
-          "swi 0x12",
+          "swi 0x120000",
           in("r0") src,
           in("r1") dest,
           lateout("r3") _,
@@ -612,6 +631,7 @@ pub fn lz77_uncomp_16bit(src: *const u32, dest: *mut u16) {
   }
 }
 
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn huff_uncomp(src: *const u32, dest: *mut u32) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -621,7 +641,7 @@ pub fn huff_uncomp(src: *const u32, dest: *mut u32) {
   {
     unsafe {
       asm!(
-          "swi 0x13",
+          "swi 0x130000",
           in("r0") src,
           in("r1") dest,
           lateout("r3") _,
@@ -630,6 +650,7 @@ pub fn huff_uncomp(src: *const u32, dest: *mut u32) {
   }
 }
 
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn rl_uncomp_8bit(src: *const u32, dest: *mut u8) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -639,7 +660,7 @@ pub fn rl_uncomp_8bit(src: *const u32, dest: *mut u8) {
   {
     unsafe {
       asm!(
-          "swi 0x14",
+          "swi 0x140000",
           in("r0") src,
           in("r1") dest,
           lateout("r3") _,
@@ -648,6 +669,7 @@ pub fn rl_uncomp_8bit(src: *const u32, dest: *mut u8) {
   }
 }
 
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn rl_uncomp_16bit(src: *const u32, dest: *mut u16) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -657,7 +679,7 @@ pub fn rl_uncomp_16bit(src: *const u32, dest: *mut u16) {
   {
     unsafe {
       asm!(
-          "swi 0x15",
+          "swi 0x150000",
           in("r0") src,
           in("r1") dest,
           lateout("r3") _,
@@ -666,6 +688,7 @@ pub fn rl_uncomp_16bit(src: *const u32, dest: *mut u16) {
   }
 }
 
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn diff_8bit_unfilter_write_8bit(src: *const u8, dest: *mut u8) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -675,7 +698,7 @@ pub fn diff_8bit_unfilter_write_8bit(src: *const u8, dest: *mut u8) {
   {
     unsafe {
       asm!(
-          "swi 0x16",
+          "swi 0x160000",
           in("r0") src,
           in("r1") dest,
           lateout("r3") _,
@@ -684,6 +707,7 @@ pub fn diff_8bit_unfilter_write_8bit(src: *const u8, dest: *mut u8) {
   }
 }
 
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn diff_8bit_unfilter_write_16bit(src: *const u8, dest: *mut u16) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -693,7 +717,7 @@ pub fn diff_8bit_unfilter_write_16bit(src: *const u8, dest: *mut u16) {
   {
     unsafe {
       asm!(
-          "swi 0x17",
+          "swi 0x170000",
           in("r0") src,
           in("r1") dest,
           lateout("r3") _,
@@ -702,6 +726,7 @@ pub fn diff_8bit_unfilter_write_16bit(src: *const u8, dest: *mut u16) {
   }
 }
 
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn diff_16bit_unfilter(src: *const u16, dest: *mut u16) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -711,7 +736,7 @@ pub fn diff_16bit_unfilter(src: *const u16, dest: *mut u16) {
   {
     unsafe {
       asm!(
-          "swi 0x18",
+          "swi 0x180000",
           in("r0") src,
           in("r1") dest,
           lateout("r3") _,
@@ -727,6 +752,7 @@ pub fn diff_16bit_unfilter(src: *const u16, dest: *mut u16) {
 /// register are unaffected.
 ///
 /// The final sound level setting will be `level` * `0x200`.
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn sound_bias(level: u32) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -735,7 +761,7 @@ pub fn sound_bias(level: u32) {
   #[cfg(target_arch = "arm")]
   {
     unsafe {
-      asm!("swi 0x19", in("r0") level);
+      asm!("swi 0x190000", in("r0") level);
     }
   }
 }
@@ -767,6 +793,7 @@ pub fn sound_bias(level: u32) {
 /// * 9: 36314
 /// * 10: 40137
 /// * 11: 42048
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn sound_driver_mode(mode: u32) {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -775,7 +802,7 @@ pub fn sound_driver_mode(mode: u32) {
   #[cfg(target_arch = "arm")]
   {
     unsafe {
-      asm!("swi 0x1B", in("r0") mode);
+      asm!("swi 0x1B0000", in("r0") mode);
     }
   }
 }
@@ -789,6 +816,7 @@ pub fn sound_driver_mode(mode: u32) {
 /// "After that, this routine is called after BG and OBJ processing is
 /// executed." --what?
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn sound_driver_main() {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -797,7 +825,7 @@ pub fn sound_driver_main() {
   #[cfg(target_arch = "arm")]
   {
     unsafe {
-      asm!("swi 0x1C");
+      asm!("swi 0x1C0000");
     }
   }
 }
@@ -807,6 +835,7 @@ pub fn sound_driver_main() {
 /// The timing is critical, so you should call this _immediately_ after the
 /// vblank interrupt (every 1/60th of a second).
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn sound_driver_vsync() {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -815,7 +844,7 @@ pub fn sound_driver_vsync() {
   #[cfg(target_arch = "arm")]
   {
     unsafe {
-      asm!("swi 0x1D");
+      asm!("swi 0x1D0000");
     }
   }
 }
@@ -827,6 +856,7 @@ pub fn sound_driver_vsync() {
 /// sound driver feature is combined afterwards. In this case, do not use it."
 /// --what?
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn sound_channel_clear() {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -835,7 +865,7 @@ pub fn sound_channel_clear() {
   #[cfg(target_arch = "arm")]
   {
     unsafe {
-      asm!("swi 0x1E");
+      asm!("swi 0x1E0000");
     }
   }
 }
@@ -850,6 +880,7 @@ pub fn sound_channel_clear() {
 /// stop sound DMA. Otherwise the DMA will overrun its buffer and cause random
 /// noise.
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn sound_driver_vsync_off() {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -858,7 +889,7 @@ pub fn sound_driver_vsync_off() {
   #[cfg(target_arch = "arm")]
   {
     unsafe {
-      asm!("swi 0x28");
+      asm!("swi 0x280000");
     }
   }
 }
@@ -869,6 +900,7 @@ pub fn sound_driver_vsync_off() {
 /// Restarts sound DMA system. After restarting the sound you must have a vblank
 /// interrupt followed by a `sound_driver_vsync` within 2/60th of a second.
 #[inline(always)]
+#[cfg_attr(target_arch = "arm", instruction_set(arm::a32))]
 pub fn sound_driver_vsync_on() {
   #[cfg(not(target_arch = "arm"))]
   {
@@ -877,7 +909,7 @@ pub fn sound_driver_vsync_on() {
   #[cfg(target_arch = "arm")]
   {
     unsafe {
-      asm!("swi 0x29");
+      asm!("swi 0x290000");
     }
   }
 }
