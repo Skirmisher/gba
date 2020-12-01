@@ -14,7 +14,7 @@ publish = false
 [dependencies]
 typenum = "1.10"
 voladdress = "0.2"
-gba-proc-macro = { path = "../gba-proc-macro" } #"0.5"
+gba-proc-macro = "0.5"
 
 [profile.release]
 lto = true
