@@ -81,6 +81,7 @@ impl Mode3 {
   ///
   /// Works fine with out of bounds points. It only draws to in bounds
   /// locations.
+  #[allow(clippy::comparison_chain)]
   pub fn draw_line(c1: isize, r1: isize, c2: isize, r2: isize, color: Color) {
     let mut col = c1;
     let mut row = r1;
@@ -107,7 +108,7 @@ impl Mode3 {
     } else if w > 0 {
       dx2 = 1;
     };
-    if !(longest > shortest) {
+    if longest <= shortest {
       core::mem::swap(&mut longest, &mut shortest);
       if h < 0 {
         dy2 = -1;
@@ -118,10 +119,10 @@ impl Mode3 {
     }
     let mut numerator = longest >> 1;
 
-    (0..(longest + 1)).for_each(|_| {
+    for _ in 0..=longest {
       Self::write(col as usize, row as usize, color);
       numerator += shortest;
-      if !(numerator < longest) {
+      if numerator >= longest {
         numerator -= longest;
         col += dx1;
         row += dy1;
@@ -129,7 +130,7 @@ impl Mode3 {
         col += dx2;
         row += dy2;
       }
-    });
+    }
   }
 }
 
@@ -256,6 +257,7 @@ impl Mode4 {
   ///
   /// Works fine with out of bounds points. It only draws to in bounds
   /// locations.
+  #[allow(clippy::comparison_chain)]
   pub fn draw_line(page: Page, c1: isize, r1: isize, c2: isize, r2: isize, pal8bpp: u8) {
     let mut col = c1;
     let mut row = r1;
@@ -282,7 +284,7 @@ impl Mode4 {
     } else if w > 0 {
       dx2 = 1;
     };
-    if !(longest > shortest) {
+    if longest <= shortest {
       core::mem::swap(&mut longest, &mut shortest);
       if h < 0 {
         dy2 = -1;
@@ -293,10 +295,10 @@ impl Mode4 {
     }
     let mut numerator = longest >> 1;
 
-    (0..(longest + 1)).for_each(|_| {
+    for _ in 0..=longest {
       Self::write(page, col as usize, row as usize, pal8bpp);
       numerator += shortest;
-      if !(numerator < longest) {
+      if numerator >= longest {
         numerator -= longest;
         col += dx1;
         row += dy1;
@@ -304,7 +306,7 @@ impl Mode4 {
         col += dx2;
         row += dy2;
       }
-    });
+    }
   }
 }
 
@@ -401,6 +403,7 @@ impl Mode5 {
   ///
   /// Works fine with out of bounds points. It only draws to in bounds
   /// locations.
+  #[allow(clippy::comparison_chain)]
   pub fn draw_line(page: Page, c1: isize, r1: isize, c2: isize, r2: isize, color: Color) {
     let mut col = c1;
     let mut row = r1;
@@ -427,7 +430,7 @@ impl Mode5 {
     } else if w > 0 {
       dx2 = 1;
     };
-    if !(longest > shortest) {
+    if longest <= shortest {
       core::mem::swap(&mut longest, &mut shortest);
       if h < 0 {
         dy2 = -1;
@@ -438,10 +441,10 @@ impl Mode5 {
     }
     let mut numerator = longest >> 1;
 
-    (0..(longest + 1)).for_each(|_| {
+    for _ in 0..=longest {
       Self::write(page, col as usize, row as usize, color);
       numerator += shortest;
-      if !(numerator < longest) {
+      if numerator >= longest {
         numerator -= longest;
         col += dx1;
         row += dy1;
@@ -449,6 +452,6 @@ impl Mode5 {
         col += dx2;
         row += dy2;
       }
-    });
+    }
   }
 }
