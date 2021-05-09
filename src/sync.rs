@@ -15,6 +15,7 @@ pub use statics::*;
 /// done to it.
 #[inline(always)]
 pub fn memory_read_hint<T>(val: *const T) {
+  #[cfg(target_arch = "arm")]
   unsafe { asm!("/* {0} */", in(reg) val, options(readonly, nostack)) }
 }
 
@@ -25,6 +26,7 @@ pub fn memory_read_hint<T>(val: *const T) {
 /// could be done to it.
 #[inline(always)]
 pub fn memory_write_hint<T>(val: *mut T) {
+  #[cfg(target_arch = "arm")]
   unsafe { asm!("/* {0} */", in(reg) val, options(nostack)) }
 }
 

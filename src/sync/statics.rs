@@ -100,33 +100,33 @@ unsafe fn transfer_align4_arm<T: Copy>(mut dst: *mut T, mut src: *const T) {
     )
   } else if size <= 24 {
     asm!(
-      "ldmia {0}!, {{r2-r5,r8-r9}}",
-      "stmia {1}!, {{r2-r5,r8-r9}}",
+      "ldmia {0}!, {{r2-r5,r7-r8}}",
+      "stmia {1}!, {{r2-r5,r7-r8}}",
       inout(reg) src, inout(reg) dst,
-      out("r2") _, out("r3") _, out("r4") _, out("r5") _, out("r8") _, out("r9") _,
+      out("r2") _, out("r3") _, out("r4") _, out("r5") _, out("r7") _, out("r8") _,
     )
   } else if size <= 28 {
     asm!(
-      "ldmia {0}!, {{r2-r5,r8-r10}}",
-      "stmia {1}!, {{r2-r5,r8-r10}}",
+      "ldmia {0}!, {{r2-r5,r7,r8,r10}}",
+      "stmia {1}!, {{r2-r5,r7,r8,r10}}",
       inout(reg) src, inout(reg) dst,
-      out("r2") _, out("r3") _, out("r4") _, out("r5") _, out("r8") _, out("r9") _,
+      out("r2") _, out("r3") _, out("r4") _, out("r5") _, out("r7") _, out("r8") _,
       out("r10") _,
     )
   } else if size <= 32 {
     asm!(
-      "ldmia {0}!, {{r2-r5,r8-r10,r12}}",
-      "stmia {1}!, {{r2-r5,r8-r10,r12}}",
+      "ldmia {0}!, {{r2-r5,r7,r8,r10,r12}}",
+      "stmia {1}!, {{r2-r5,r7,r8,r10,r12}}",
       inout(reg) src, inout(reg) dst,
-      out("r2") _, out("r3") _, out("r4") _, out("r5") _, out("r8") _, out("r9") _,
+      out("r2") _, out("r3") _, out("r4") _, out("r5") _, out("r7") _, out("r8") _,
       out("r10") _, out("r12") _,
     )
   } else if size <= 36 {
     asm!(
-      "ldmia {0}!, {{r2-r5,r8-r10,r12,r14}}",
-      "stmia {1}!, {{r2-r5,r8-r10,r12,r14}}",
+      "ldmia {0}!, {{r2-r5,r7,r8,r10,r12,r14}}",
+      "stmia {1}!, {{r2-r5,r7,r8,r10,r12,r14}}",
       inout(reg) src, inout(reg) dst,
-      out("r2") _, out("r3") _, out("r4") _, out("r5") _, out("r8") _, out("r9") _,
+      out("r2") _, out("r3") _, out("r4") _, out("r5") _, out("r7") _, out("r8") _,
       out("r10") _, out("r12") _, out("r14") _,
     )
   } else {

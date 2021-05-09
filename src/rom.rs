@@ -2,7 +2,7 @@
 
 use super::*;
 
-pub const WAITCNT: VolAddress<WaitstateControl> = unsafe { VolAddress::new(0x400_0204) };
+pub const WAITCNT: VolAddress<WaitstateControl, Safe, Safe> = unsafe { VolAddress::new(0x400_0204) };
 
 newtype!(WaitstateControl, pub u32);
 

@@ -176,7 +176,7 @@ pub const BIOS_IF: VolAddress<IrqFlags, Safe, Unsafe> = unsafe { VolAddress::new
 /// ## Safety
 /// * This must be an ARM function
 /// * This function is called in IRQ mode.
-pub const USER_IRQ_FN: VolAddress<Option<fn()>> = unsafe { VolAddress::new(0x0300_7FFC) };
+pub const USER_IRQ_FN: VolAddress<Option<fn()>, Safe, Unsafe> = unsafe { VolAddress::new(0x0300_7FFC) };
 
 /// A function pointer for use as an interrupt handler.
 pub type IrqHandler = extern "C" fn(IrqFlags);
