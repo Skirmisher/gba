@@ -2,6 +2,8 @@
 #![feature(asm)]
 #![feature(global_asm)]
 #![feature(isa_attribute)]
+#![feature(const_generics)]
+#![feature(const_evaluatable_checked)]
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 #![allow(dead_code)]

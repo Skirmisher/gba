@@ -766,7 +766,97 @@ pub fn sound_bias(level: u32) {
   }
 }
 
-//SoundDriverInit
+#[repr(packed, C)]
+pub struct SoundArea<const MAX_CH: usize, const PCM_BF_X2: usize> {
+    /// Flag the system checks to see whether the work area has been initialized
+    /// and whether it is currently being accessed.
+    pub ident: u32,
+    _dma_count: u8,
+    /// Variable for applying reverb effects to direct sound
+    pub reverb: u8,
+    // strange names from gbatek for these private fields
+    _d1: u16,
+    _func: *mut fn() -> (),
+    _intp: i32,
+    _no_use: *mut core::ffi::c_void,
+    /// The structure array for controlling the direct sound channels
+    /// (currently 8 channels are available).
+    /// The term "channel" here does not refer to hardware channels,
+    /// but rather to virtual constructs inside the sound driver.
+    pub vchn: [SoundChannel; MAX_CH],
+    pub pcmbuf: [i8; PCM_BF_X2],
+}
+
+#[repr(packed, C)]
+pub struct SoundChannel {
+    /// The flag indicating the status of this channel.
+    /// When 0 sound is stopped.
+    /// To start sound, set other parameters and then write 80h to here.
+    /// To stop sound, logical OR 40h for a release-attached off (key-off),
+    /// or write zero for a pause.
+    /// The use of other bits is prohibited.
+    // TODO: repr(u8) enum? are other values set by bios? hide behind a setter fn?
+    pub status_flag: u8,
+    _r1: u8,
+    /// Sound volume output to right side
+    pub right_volume: u8,
+    /// Sound volume output to left side
+    pub left_volume: u8,
+    /// The attack value of the envelope.
+    /// When the sound starts, the volume begins at zero and increases every 1/60 second.
+    /// When it reaches 255, the process moves on to the next decay value.
+    pub attack: u8,
+    /// The decay value of the envelope.
+    /// It is multiplied by "this value/256" every 1/60 sec. and when sustain value is reached,
+    /// the process moves to the sustain condition.
+    pub decay: u8,
+    /// The sustain value of the envelope. The sound is sustained by this amount.
+    /// (Actually, multiplied by right_volume/256, left_volume/256 and output left and right.)
+    pub sustain: u8,
+    /// The release value of the envelope.
+    /// Key-off (logical OR 40h in sf) to enter this state.
+    /// The value is multiplied by "this value/256" every 1/60 sec.
+    /// and when it reaches zero, this channel is completely stopped.
+    pub release: u8,
+    _r2: [u8; 4],
+    /// The frequency of the produced sound.
+    /// Write the value obtained with the MidiKey2Freq function here.
+    pub frequency: u32,
+    // workaround for size issues
+    pub wave_data: *const WaveDataProxy,
+    _r3: [u32; 6],
+    _r4: [u8; 4],
+}
+
+#[repr(packed, C)]
+// TODO: better constraint, it needs to be a plain array (not a pointer!)
+pub struct WaveData<const SIZE: usize> {
+    _type: u16,
+    /// At the present time, non-looped (1 shot) waveform is 0000h and forward loop is 4000h.
+    pub stat: u16,
+    /// This value is used to calculate the frequency. It is obtained using the following formula:
+    /// `sampling rate x 2^((180-original MIDI key)/12)`
+    pub freq: u32,
+    /// Loop pointer (start of loop)
+    pub loop_position: u32,
+    /// Number of samples (end position)
+    pub size: u32,
+    /// The actual waveform data. Takes (number of samples+1) bytes of 8bit signed linear
+    /// uncompressed data. The last byte is zero for a non-looped waveform, and the same value as
+    /// the loop pointer data for a looped waveform.
+    pub data: [i8; SIZE],
+}
+
+pub struct WaveDataProxy;
+
+impl<const SIZE: usize> From<&WaveData<SIZE>> for *const WaveDataProxy {
+    fn from(wave: &WaveData<SIZE>) -> Self {
+        let wave_proxy: *const WaveData<SIZE> = wave;
+        wave_proxy as *const WaveDataProxy
+    }
+}
+
+// TODO: SoundDriverInit
 
 /// (`swi 0x1B`) "SoundDriverMode", sets the sound driver operation mode.
 ///
